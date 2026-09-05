@@ -1,0 +1,119 @@
+#Requires -Version 5.1
+# Reels-builder: generic project setup script.
+# Creates <Desktop>\<ProjectName>\{media, audio, music, output}, drops in the
+# generic build_reels.py, and makes sure ffmpeg + Python are installed via winget.
+# Re-running this script (e.g. for a new project) is always safe.
+#
+# Usage:
+#   .\setup.ps1 -ProjectName "Reels-MyTopic"
+
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$ProjectName
+)
+
+$ErrorActionPreference = "Stop"
+
+# Desktop\ can be redirected into OneDrive - GetFolderPath resolves the real
+# location instead of guessing "$env:USERPROFILE\Desktop" (which breaks when
+# OneDrive Backup redirects the desktop, a common Windows setup).
+$Desktop = [Environment]::GetFolderPath("Desktop")
+$Root    = Join-Path $Desktop $ProjectName
+$Media   = Join-Path $Root "media"
+$Audio   = Join-Path $Root "audio"
+$Music   = Join-Path $Root "music"
+$Output  = Join-Path $Root "output"
+
+Write-Host "=== Reels-builder: настройка проекта '$ProjectName' ===" -ForegroundColor Cyan
+Write-Host ""
+
+foreach ($d in @($Root, $Media, $Audio, $Music, $Output)) {
+    if (-not (Test-Path $d)) {
+        New-Item -ItemType Directory -Path $d -Force | Out-Null
+        Write-Host "Создана папка: $d"
+    } else {
+        Write-Host "Папка уже есть:  $d"
+    }
+}
+
+$Utf8Bom = New-Object System.Text.UTF8Encoding($true)
+
+$buildPyContent = @'
+__BUILD_REELS_PY__
+'@
+[System.IO.File]::WriteAllText((Join-Path $Root "build_reels.py"), $buildPyContent, $Utf8Bom)
+Write-Host "Записан build_reels.py"
+
+$buildPs1Content = @'
+$ErrorActionPreference = "Stop"
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $here
+
+$py = Get-Command python -ErrorAction SilentlyContinue
+if (-not $py) {
+    Write-Host "Python не найден. Установи: winget install --id Python.Python.3.12 -e" -ForegroundColor Red
+    Read-Host "Нажмите Enter, чтобы закрыть"
+    exit 1
+}
+
+python build_reels.py
+if ($LASTEXITCODE -eq 0) {
+    Write-Host ""
+    Write-Host ("Готово! Смотри папку output внутри: " + $here) -ForegroundColor Green
+} else {
+    Write-Host "Что-то пошло не так, смотри сообщение об ошибке выше." -ForegroundColor Red
+}
+Read-Host "Нажмите Enter, чтобы закрыть"
+'@
+[System.IO.File]::WriteAllText((Join-Path $Root "build.ps1"), $buildPs1Content, $Utf8Bom)
+Write-Host "Записан build.ps1"
+
+Write-Host ""
+Write-Host "Проверяю ffmpeg..."
+$ffmpegCmd = Get-Command ffmpeg -ErrorAction SilentlyContinue
+if (-not $ffmpegCmd) {
+    $wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $wingetCmd) {
+        Write-Host "ffmpeg не найден, а winget недоступен." -ForegroundColor Red
+        Write-Host "Установи вручную: https://www.gyan.dev/ffmpeg/builds/" -ForegroundColor Yellow
+    } else {
+        Write-Host "ffmpeg не найден. Устанавливаю через winget..."
+        winget install --id Gyan.FFmpeg -e --source winget --accept-source-agreements --accept-package-agreements
+        Write-Host "ffmpeg установлен. Открой новое окно PowerShell, чтобы обновился PATH." -ForegroundColor Green
+    }
+} else {
+    Write-Host "ffmpeg уже установлен: $($ffmpegCmd.Source)"
+}
+
+Write-Host ""
+Write-Host "Проверяю Python..."
+$pyCmd = Get-Command python -ErrorAction SilentlyContinue
+if (-not $pyCmd) {
+    $wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $wingetCmd) {
+        Write-Host "Python не найден, а winget недоступен." -ForegroundColor Red
+        Write-Host "Установи вручную: https://www.python.org/downloads/" -ForegroundColor Yellow
+    } else {
+        Write-Host "Python не найден. Устанавливаю через winget..."
+        winget install --id Python.Python.3.12 -e --source winget --accept-source-agreements --accept-package-agreements
+        Write-Host "Python установлен. Открой новое окно PowerShell, чтобы обновился PATH." -ForegroundColor Green
+    }
+} else {
+    Write-Host "Python уже установлен: $($pyCmd.Source)"
+}
+
+Write-Host ""
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "ГОТОВО. Папка проекта:" -ForegroundColor Cyan
+Write-Host "  $Root"
+Write-Host ""
+Write-Host "Чтобы перейти в неё в PowerShell, скопируй и вставь ровно эту строку:"
+Write-Host "  cd `"$Root`"" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Дальше:"
+Write-Host "  1. Положи scenario.json (пришлёт Claude) прямо в эту папку"
+Write-Host "  2. Положи картинки/видео в media, озвучку в audio, музыку (по желанию) в music"
+Write-Host "  3. Запусти build.ps1 (или 'python build_reels.py') из этой папки"
+Write-Host "     Результат появится в output\"
+Write-Host "==========================================" -ForegroundColor Cyan
+Read-Host "Нажмите Enter, чтобы закрыть"
