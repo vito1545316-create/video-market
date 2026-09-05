@@ -128,12 +128,21 @@ def build():
         ])
         segment_files.append(seg)
 
-    concat_list = TMP / "concat.txt"
-    concat_list.write_text("".join(f"file '{f.resolve().as_posix()}'\n" for f in segment_files))
+    # Feed each segment as its own -i input and join with the concat *filter* rather than
+    # the concat *demuxer* (which reads paths from a text list file) - on Windows the demuxer
+    # misreads non-ASCII characters (e.g. a Cyrillic username) in that list file and fails.
+    n = len(segment_files)
+    concat_inputs = []
+    for f in segment_files:
+        concat_inputs += ["-i", str(f)]
+    filter_str = "".join(f"[{i}:v]" for i in range(n)) + f"concat=n={n}:v=1:a=0[outv]"
     video_novoice = TMP / "video_novoice.mp4"
     run([
-        "ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(concat_list),
-        "-c", "copy", str(video_novoice),
+        "ffmpeg", "-y", *concat_inputs,
+        "-filter_complex", filter_str,
+        "-map", "[outv]",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+        str(video_novoice),
     ])
 
     ass_path = TMP / "subs.ass"
