@@ -1,0 +1,33 @@
+{
+  "output_name": "example-reel.mp4",
+  "voice": "audio/voice.mp3",
+  "music": "music/music.mp3",
+  "fonts": {
+    "title": { "family": "Arial", "size": 50, "color": "#FFE500" },
+    "caption": { "family": "Arial", "size": 58, "color": "#FFFFFF" }
+  },
+  "scenes": [
+    {
+      "media": "media/01.png",
+      "start": 0.0,
+      "end": 4.0,
+      "title": "A SHORT HOOK",
+      "caption": "The first line the narrator says, matching this scene.",
+      "effect": "zoom_in"
+    },
+    {
+      "media": "media/02.mp4",
+      "start": 4.0,
+      "end": 9.0,
+      "title": "A VIDEO SCENE",
+      "caption": "This scene uses a video clip instead of a still image."
+    },
+    {
+      "media": "media/03.png",
+      "start": 9.0,
+      "end": 12.0,
+      "title": null,
+      "caption": "A beat with no title card, just a caption."
+    }
+  ]
+}
