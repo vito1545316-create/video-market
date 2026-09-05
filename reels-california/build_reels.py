@@ -45,9 +45,9 @@ SCENES = [
 ]
 
 
-def run(cmd):
+def run(cmd, cwd=None):
     print("+", " ".join(str(c) for c in cmd))
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd, check=True, cwd=cwd)
 
 
 def ffprobe_duration(path: Path) -> float:
@@ -169,14 +169,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     ass_path.write_text("".join(lines), encoding="utf-8")
 
     video_subs = TMP / "video_subs.mp4"
-    # ffmpeg's subtitles/ass filter needs forward slashes and escaped colons on Windows paths
-    ass_arg = ass_path.resolve().as_posix().replace(":", "\\:")
+    # The ass filter's option parser splits on ':' - a Windows drive letter like "C:" breaks
+    # it even when escaped. Run from inside TMP and reference plain filenames to avoid this.
     run([
-        "ffmpeg", "-y", "-i", str(video_novoice),
-        "-vf", f"ass={ass_arg}",
+        "ffmpeg", "-y", "-i", video_novoice.name,
+        "-vf", f"ass={ass_path.name}",
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
-        str(video_subs),
-    ])
+        video_subs.name,
+    ], cwd=str(TMP))
 
     music = MUSIC / "music.mp3"
     final_out = OUTPUT / "reels-california.mp4"
