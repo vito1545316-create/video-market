@@ -11,9 +11,10 @@ projects — only this file (and the media it points to) does.
   "width": 1080,
   "height": 1920,
   "fps": 30,
+  "voice_volume_db": 0,
   "fonts": {
-    "title":   { "family": "Arial", "size": 50, "color": "#FFE500" },
-    "caption": { "family": "Arial", "size": 58, "color": "#FFFFFF" }
+    "title":   { "family": "Arial", "size": 50, "color": "#FFE500", "margin_v": 200 },
+    "caption": { "family": "Arial", "size": 58, "color": "#FFFFFF", "margin_v": 340 }
   },
   "scenes": [
     {
@@ -40,6 +41,7 @@ projects — only this file (and the media it points to) does.
 | `width`, `height` | no | 1080 x 1920 | Change only for a non-Reels aspect ratio. |
 | `fps` | no | 30 | |
 | `fonts.title` / `fonts.caption` | no | Arial, yellow title / white caption | See Fonts below. |
+| `voice_volume_db` | no | `0` | Gain applied to the voiceover, in dB, before mixing (e.g. `3` to make the narration noticeably louder). Positive values can clip if the source is already near full volume - if it sounds distorted, try a smaller value rather than a larger one. |
 
 ## Scenes
 
@@ -72,3 +74,12 @@ ASS `&HAABBGGRR` string for anyone who already knows the format.
 Title renders top-center, caption renders bottom-center — this matches the
 Reels convention of a short label up top and the spoken line at the bottom,
 and keeps the two from ever overlapping.
+
+`margin_v` is the distance in pixels from the top edge (title) or bottom edge
+(caption) of a 1920-tall frame. The defaults (200 top / 340 bottom) keep text
+out of Instagram's own UI overlays — the profile picture/mute icon area at
+the top, and the username/caption/like-comment-share buttons at the bottom.
+Those overlap zones aren't pixel-exact or officially documented by Instagram
+and shift between app versions, so treat the defaults as a safe starting
+point and preview on an actual phone before publishing, especially if you
+tighten them.

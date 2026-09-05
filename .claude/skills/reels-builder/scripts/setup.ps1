@@ -128,10 +128,17 @@ def load_config(scenario_path: Path) -> dict:
     title_font.setdefault("family", "Arial")
     title_font.setdefault("size", 50)
     title_font.setdefault("color", "#FFE500")
+    # 200px keeps the title clear of Instagram's top UI (profile pic, mute icon)
+    # on a 1920-tall frame - see references/scenario-schema.md for sources.
+    title_font.setdefault("margin_v", 200)
     caption_font = fonts.setdefault("caption", {})
     caption_font.setdefault("family", "Arial")
     caption_font.setdefault("size", 58)
     caption_font.setdefault("color", "#FFFFFF")
+    # 340px keeps the caption clear of Instagram's bottom UI (username, caption,
+    # like/comment/share buttons) on a 1920-tall frame.
+    caption_font.setdefault("margin_v", 340)
+    cfg.setdefault("voice_volume_db", 0)
     music_cfg = cfg.get("music")
     if isinstance(music_cfg, str):
         cfg["music"] = {"file": music_cfg, "volume_db": -20}
@@ -250,8 +257,8 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Caption,{caption_font['family']},{caption_font['size']},{to_ass_color(caption_font['color'])},&H000000FF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,3,0,2,60,60,90,1
-Style: Title,{title_font['family']},{title_font['size']},{to_ass_color(title_font['color'])},&H000000FF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,3,0,8,60,60,90,1
+Style: Caption,{caption_font['family']},{caption_font['size']},{to_ass_color(caption_font['color'])},&H000000FF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,3,0,2,60,60,{caption_font['margin_v']},1
+Style: Title,{title_font['family']},{title_font['size']},{to_ass_color(title_font['color'])},&H000000FF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,1,3,0,8,60,60,{title_font['margin_v']},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -280,6 +287,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     ], cwd=str(tmp))
 
     final_out = output_dir / cfg["output_name"]
+    voice_db = cfg.get("voice_volume_db", 0)
     music_cfg = cfg.get("music")
     music_path = (project / music_cfg["file"]).resolve() if music_cfg else None
     if music_path and music_path.exists():
@@ -289,8 +297,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "ffmpeg", "-y",
             "-i", str(video_subs), "-i", str(voice), "-i", str(music_path),
             "-filter_complex",
+            f"[1:a]volume={voice_db}dB[vc];"
             f"[2:a]volume={db}dB,aloop=loop=-1:size=2e9[bg];"
-            "[1:a][bg]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[aout]",
+            "[vc][bg]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[aout]",
             "-map", "0:v", "-map", "[aout]",
             "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
             "-shortest", str(final_out),
@@ -300,6 +309,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "ffmpeg", "-y",
             "-i", str(video_subs), "-i", str(voice),
             "-map", "0:v", "-map", "1:a",
+            "-af", f"volume={voice_db}dB",
             "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
             "-shortest", str(final_out),
         ])
