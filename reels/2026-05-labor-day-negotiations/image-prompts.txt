@@ -1,0 +1,92 @@
+ОПИСАНИЕ КАРТИНОК ДЛЯ ГЕНЕРАЦИИ — «День труда / 1 мая»
+Формат: вертикаль 9:16, под Instagram Reels.
+
+=====================================================
+ЕДИНЫЙ СТИЛЬ-ТЕГ (добавлять в конец КАЖДОГО промпта)
+=====================================================
+cinematic historical photo-collage, 1880s-1890s America, warm sepia tones
+with high-contrast accents, paper-cut collage aesthetic, grainy film
+texture, vertical 9:16 composition, no modern text overlays, no
+watermarks, no logos, no legible readable text in image
+
+=====================================================
+БИТ 2 — ЗАВЯЗКА (0:03–0:16), Paper-Cut стиль
+=====================================================
+
+1. ФАБРИКА СНАРУЖИ
+"Late 19th century American factory exterior, brick industrial building,
+tall smoke stacks, workers entering at dawn, [СТИЛЬ-ТЕГ]"
+
+2. ФАБРИКА ВНУТРИ
+"Interior of a 19th century textile or steel factory, rows of workers at
+machines, exhausted postures, dim gaslight lighting, [СТИЛЬ-ТЕГ]"
+
+3. СТОП-КАДР "100 Ч/НЕД" — визуальная метафора
+"Close-up of a worn pocket watch or wall clock, tired worker's hands
+resting near it, blurred industrial background, [СТИЛЬ-ТЕГ]"
+(титр с цифрой "100 Ч/НЕД" накладывается поверх в монтаже, не генерировать текст в кадре)
+
+4. СТОП-КАДР "$1.5/ДЕНЬ" — визуальная метафора
+"Worn leather coin purse with a few small coins on a rough wooden table,
+19th century American working-class setting, [СТИЛЬ-ТЕГ]"
+(титр с цифрой "$1.5" накладывается поверх в монтаже)
+
+=====================================================
+БИТ 3 — ПОВОРОТ (0:16–0:30)
+=====================================================
+
+5. СИЛУЭТ ГОВОРЯЩЕГО (для монтажной перебивки, не хук)
+"Silhouette of a determined person in profile at a 45 degree angle,
+dramatic hard side lighting, 19th century clothing, high contrast,
+[СТИЛЬ-ТЕГ]"
+
+6. СИНХРОННАЯ ТОЛПА
+"Massive crowd of workers marching in unison through a wide American
+city street in 1886, banners, aerial wide angle, [СТИЛЬ-ТЕГ]"
+
+7. КАЛЕНДАРЬ С ДАТОЙ
+"Close-up of an old paper wall calendar, a hand circling a date in early
+May with a pencil, worn paper texture, dramatic side lighting,
+[СТИЛЬ-ТЕГ]"
+
+8. ГАЗЕТНЫЕ ЗАГОЛОВКИ (общий план, без читаемого текста)
+"Stack of 19th century newspapers on a table, close-up angle, dramatic
+lighting, blurred/illegible typography to avoid fabricated headlines,
+[СТИЛЬ-ТЕГ]"
+
+=====================================================
+БИТ 4 — КУЛЬМИНАЦИЯ (0:30–0:44)
+=====================================================
+
+9. ГЛОБУС С ПОДСВЕТКОЙ СТРАН
+"Stylized glowing 3D globe of Earth on a dark background, multiple
+countries highlighted in warm gold light, clean minimal motion-graphics
+style, no text, no country labels"
+
+10. КАРТА США С АКЦЕНТОМ
+"Stylized flat vector map of the United States, one region glowing softly,
+minimal dark-background motion graphic, no text, no labels"
+
+=====================================================
+ПЕТЛЯ / ФИНАЛЬНЫЙ КАДР (0:44–0:52, все версии)
+=====================================================
+
+11. ЧИСТЫЙ ФОН ПОД HARD CUT
+"Minimalist dark clean background plate with subtle vignette, empty
+vertical frame reserved for text overlay, no objects, no text"
+
+=====================================================
+ТЕХНИЧЕСКИЕ ЗАМЕТКИ
+=====================================================
+- Разрешение: минимум 1080×1920 (вертикаль), при необходимости апскейл.
+- Хук (0:00–0:03) — это live-съёмка спикера крупным планом, НЕ генерируемое
+  изображение.
+- Все сгенерированные стоп-кадры анимировать лёгким пан/зум (Ken Burns)
+  в монтаже — сами по себе статичные изображения не двигаются.
+- Не генерировать лица конкретных реальных исторических личностей и не
+  вкладывать в кадр придуманные тексты газет/цитат — риск выдать
+  стилизацию за подлинный архивный документ. Кадры 5–8 намеренно
+  безликие/силуэтные и с нечитаемым текстом.
+- Если ролик публикуется с пометкой источника медиа — указать в описании,
+  что визуальный ряд частично сгенерирован ИИ и является стилизацией,
+  архивные факты см. в factcheck.md.
